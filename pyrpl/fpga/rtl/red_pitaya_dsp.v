@@ -77,6 +77,9 @@ module red_pitaya_dsp #(
 
    // trigger outputs for the scope
    output                trig_o,   // output from trigger dsp module
+   
+   // sync inputs for the PIDs
+   input      [  3-1: 0] sync_i,
 
    // system bus
    input      [ 32-1: 0] sys_addr        ,  //!< bus address
@@ -281,6 +284,7 @@ always @(posedge clk_i) begin
          if (sys_addr[16-1:0]==16'h0C)                                            sync <= sys_wdata[MODULES-1:0];
       end
    end
+   //sync[3-1:0] <= sync_i;  // overrides with the external input synchronisation
 end
 
 wire sys_en;
@@ -322,7 +326,7 @@ generate for (j = 0; j < 3; j = j+1) begin
      // data
      .clk_i        (  clk_i          ),  // clock
      .rstn_i       (  rstn_i         ),  // reset - active low
-     .sync_i       (  sync[j]        ),  // syncronization of different dsp modules
+     .sync_i       (  sync_i[j]        ),  // syncronization of different dsp modules
      .dat_i        (  input_signal [j] ),  // input data
      .dat_o        (  output_direct[j]),  // output data
 	 .diff_dat_i   (  diff_input_signal[j] ),  // input data for differential mode

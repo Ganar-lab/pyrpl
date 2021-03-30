@@ -518,6 +518,8 @@ red_pitaya_dsp i_dsp (
   .pwm3            (  pwm_signals[3]         ),
 
   .trig_o          (  dsp_trigger            ),
+  
+  .sync_i          (  exp_p_in[3:1]          ),
 
   // System bus
   .sys_addr        (  sys_addr                   ),  // address
