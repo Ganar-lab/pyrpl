@@ -257,7 +257,7 @@ always @(posedge clk_i) begin
    end
 end
 
-assign int_sum = (pause_i==1'b1) ? $signed(pid_sum) : $signed(ki_mult) + $signed(int_reg);
+assign int_sum = (pause_i==1'b1) ? $signed(int_reg) : $signed(ki_mult) + $signed(int_reg);
 assign int_shr = $signed(int_reg[IBW-1:ISR]) ;
 
 //---------------------------------------------------------------------------------
