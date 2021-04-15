@@ -322,7 +322,7 @@ always @(posedge clk_i) begin
    end
 end
 
-assign pid_sum = $signed(kp_reg) + $signed(int_shr) + $signed(kd_reg_s);
+assign pid_sum = (pause_p==1'b1 | pause_i==1'b1 | pause_d==1'b1) ? $signed(pid_out) : $signed(kp_reg) + $signed(int_shr) + $signed(kd_reg_s);
 
 
 generate 
