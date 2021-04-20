@@ -1,7 +1,7 @@
 Copyright 1986-2015 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------
 | Tool Version      : Vivado v.2015.4 (lin64) Build 1412921 Wed Nov 18 09:44:32 MST 2015
-| Date              : Thu Apr 15 18:51:01 2021
+| Date              : Tue Apr 20 14:32:38 2021
 | Host              : ganael-VirtualBox running 64-bit Ubuntu 14.04.6 LTS
 | Command           : report_clock_utilization -file out/clock_util.rpt
 | Design            : red_pitaya_top
