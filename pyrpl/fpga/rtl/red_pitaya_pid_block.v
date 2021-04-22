@@ -307,12 +307,14 @@ localparam MAXBW = 28; //17
 
 wire signed [   MAXBW-1: 0] pid_sum;
 reg signed  [   14-1: 0] pid_out;
+reg signed  [   14-1: 0] pid_out_prev1;
 
 always @(posedge clk_i) begin
    if (rstn_i == 1'b0) begin
       pid_out    <= 14'b0;
    end
    else begin
+      pid_out_prev1 <= pid_out;
       if ({pid_sum[MAXBW-1],|pid_sum[MAXBW-2:13]} == 2'b01) //positive overflow
          pid_out <= 14'h1FFF;
       else if ({pid_sum[MAXBW-1],&pid_sum[MAXBW-2:13]} == 2'b10) //negative overflow
@@ -322,7 +324,7 @@ always @(posedge clk_i) begin
    end
 end
 
-assign pid_sum = (pause_p==1'b1 | pause_i==1'b1 | pause_d==1'b1) ? $signed(pid_out) : $signed(kp_reg) + $signed(int_shr) + $signed(kd_reg_s);
+assign pid_sum = (pause_p==1'b1 | pause_i==1'b1 | pause_d==1'b1) ? $signed(pid_out_prev1) : $signed(kp_reg) + $signed(int_shr) + $signed(kd_reg_s);
 
 
 generate 
@@ -343,3 +345,4 @@ generate
 endgenerate
 
 endmodule
+
