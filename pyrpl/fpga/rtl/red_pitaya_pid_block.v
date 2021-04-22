@@ -224,7 +224,7 @@ always @(posedge clk_i) begin
    end
 end
 
-assign kp_mult = (pause_p==1'b1) ? $signed({15+GAINBITS{1'b0}}) : $signed(error) * $signed(set_kp);
+assign kp_mult = $signed(error) * $signed(set_kp);
 
 //---------------------------------------------------------------------------------
 // Integrator - 2 cycles delay (but treat similar to proportional since it
@@ -257,7 +257,7 @@ always @(posedge clk_i) begin
    end
 end
 
-assign int_sum = (pause_i==1'b1) ? $signed(int_reg) : $signed(ki_mult) + $signed(int_reg);
+assign int_sum = $signed(ki_mult) + $signed(int_reg);
 assign int_shr = $signed(int_reg[IBW-1:ISR]) ;
 
 //---------------------------------------------------------------------------------
@@ -287,7 +287,7 @@ generate
 		      kd_reg_s <= $signed(kd_reg) - $signed(kd_reg_r); //this is the end result
 		   end
 		end
-        assign kd_mult = (pause_d==1'b1) ? $signed({15+GAINBITS-1{1'b0}}) : $signed(error) * $signed(set_kd);
+        assign kd_mult = $signed(error) * $signed(set_kd);
 	end
 	else begin
 		wire [15+GAINBITS-DSR:0] kd_reg_s;
@@ -307,12 +307,14 @@ localparam MAXBW = 28; //17
 
 wire signed [   MAXBW-1: 0] pid_sum;
 reg signed  [   14-1: 0] pid_out;
+reg signed  [   14-1: 0] pid_out_prev1;
 
 always @(posedge clk_i) begin
    if (rstn_i == 1'b0) begin
       pid_out    <= 14'b0;
    end
    else begin
+      pid_out_prev1 <= pid_out;
       if ({pid_sum[MAXBW-1],|pid_sum[MAXBW-2:13]} == 2'b01) //positive overflow
          pid_out <= 14'h1FFF;
       else if ({pid_sum[MAXBW-1],&pid_sum[MAXBW-2:13]} == 2'b10) //negative overflow
@@ -322,7 +324,7 @@ always @(posedge clk_i) begin
    end
 end
 
-assign pid_sum = $signed(kp_reg) + $signed(int_shr) + $signed(kd_reg_s);
+assign pid_sum = (pause_p==1'b1 | pause_i==1'b1 | pause_d==1'b1) ? $signed(pid_out_prev1) : $signed(kp_reg) + $signed(int_shr) + $signed(kd_reg_s);
 
 
 generate 
